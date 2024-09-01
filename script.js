@@ -1,156 +1,84 @@
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: url('background.jpg') repeat-x;
-    background-size: cover;
-    animation: moveBackground 20s linear infinite;
-    direction: rtl;
-    color: white; /* Default text color for body */
+// Calculator functions
+function appendDisplay(value) {
+    document.getElementById('display').value += value;
 }
 
-@keyframes moveBackground {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: -2000px 0;
-    }
+function clearDisplay() {
+    document.getElementById('display').value = '';
 }
 
-header {
-    background-color: rgba(76, 175, 80, 0.8);
-    color: white;
-    padding: 20px;
-    font-size: 24px;
-}
-
-nav a {
-    margin: 0 15px;
-    color: white;
-    text-decoration: none;
-}
-
-main {
-    padding: 20px;
-}
-
-h1, h2, h3 {
-    color: white; /* Header and titles text color */
-}
-
-.calculator {
-    display: inline-block;
-    background-color: #333;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.calculator input {
-    width: 100%;
-    height: 40px;
-    text-align: right;
-    margin-bottom: 10px;
-    border: none;
-    background-color: #666;
-    color: white;
-    font-size: 20px;
-    padding: 5px;
-}
-
-.calculator .buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 50px);
-    grid-gap: 10px;
-}
-
-.calculator button {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-    border: none;
-    background-color: #555;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.calculator button:hover {
-    background-color: #777;
-}
-
-.counter-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-}
-
-.counter, .middle-counter {
-    background-color: rgba(221, 221, 221, 0.8);
-    border-radius: 10px;
-    margin: 10px;
-    padding: 30px;
-    width: 150px;
-    height: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: #333;
-    cursor: pointer;
-    position: relative;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.counter:hover, .middle-counter:hover {
-    background-color: rgba(187, 187, 187, 0.8);
-}
-
-.counter:active, .middle-counter:active {
-    box-shadow: 0 0 20px 5px green; /* Green glow effect */
-}
-
-.counter.zero, .middle-counter.zero {
-    background-color: red;
-    color: white;
-}
-
-/* Animation for the star shine effect */
-.star {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: yellow;
-    border-radius: 50%;
-    opacity: 0;
-    animation: starAnimation 1s ease-out forwards;
-}
-
-@keyframes starAnimation {
-    0% {
-        opacity: 1;
-        transform: scale(0);
-        background-color: yellow;
-    }
-    100% {
-        opacity: 0;
-        transform: scale(2);
-        background-color: green;
+function calculate() {
+    const display = document.getElementById('display');
+    try {
+        display.value = eval(display.value);
+    } catch {
+        display.value = 'Error';
     }
 }
 
-#quote, #hijri-calendar, #prayer-times {
-    font-size: 18px;
-    margin: 20px;
+// Counter functions
+function decreaseCounter(counterId) {
+    const counter = document.getElementById(counterId);
+    const countSpan = counter.querySelector('.count');
+    let count = parseInt(countSpan.textContent);
+
+    if (count > 0) {
+        count--;
+        countSpan.textContent = count;
+        createStarEffect(counter);
+
+        if (count === 0) {
+            counter.classList.add('zero'); // Add red background when counter reaches zero
+        }
+    }
 }
 
-#calligraphy-canvas {
-    border: 1px solid #ddd;
-    margin: 20px auto;
+function createStarEffect(counter) {
+    for (let i = 0; i < 5; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        counter.appendChild(star);
+
+        // Remove the star after animation
+        setTimeout(() => {
+            star.remove();
+        }, 1000);
+    }
 }
 
-footer {
-    background-color: rgba(76, 175, 80, 0.8);
-    color: white;
-    padding: 10px;
+// Fetch and display Islamic calendar (Hijri) data
+function fetchHijriDate() {
+    const hijriCalendar = document.getElementById('hijri-calendar');
+    const today = new Date();
+    // Example Hijri date (replace with actual API or calculation)
+    hijriCalendar.textContent = `Today’s Hijri Date: 25 Ramadan 1445`;
 }
+
+// Fetch and display prayer times data
+function fetchPrayerTimes() {
+    const prayerTimes = document.getElementById('prayer-times');
+    // Example prayer times (replace with actual API or calculation)
+    document.getElementById('fajr-time').textContent = 'Fajr: 05:00 AM';
+    document.getElementById('dhuhr-time').textContent = 'Dhuhr: 12:00 PM';
+    document.getElementById('asr-time').textContent = 'Asr: 03:30 PM';
+    document.getElementById('maghrib-time').textContent = 'Maghrib: 06:45 PM';
+    document.getElementById('isha-time').textContent = 'Isha: 08:00 PM';
+}
+
+// Draw interactive calligraphy
+function drawCalligraphy() {
+    const canvas = document.getElementById('calligraphy-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.font = '40px Arabic Typesetting';
+    ctx.textAlign = 'center';
+    ctx.fillText('بسم الله الرحمن الرحيم', canvas.width / 2, canvas.height / 2);
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    fetchHijriDate();
+    fetchPrayerTimes();
+    drawCalligraphy();
+});
